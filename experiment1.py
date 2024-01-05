@@ -164,8 +164,12 @@ def sample_memory_sequential(memories, starting_query, params):
             retrieved_rewards[sim_idx,step_idx] = retrieved_reward.item()
             retrieved_memory_idxs[sim_idx,step_idx] = retrieved_memory_idx
             params_new['state_weight'] = 0
-            params_new['context_weight'] /= params_new['context_weight']+params_new['time_weight']
-            params_new['time_weight'] /= params_new['context_weight']+params_new['time_weight']
+            try:
+                params_new['context_weight'] /= params_new['context_weight']+params_new['time_weight']
+                params_new['time_weight'] /= params_new['context_weight']+params_new['time_weight']
+            except ZeroDivisionError:
+                params_new['context_weight'] = 0
+                params_new['time_weight'] = 0
     return retrieved_states, retrieved_contexts, retrieved_times, retrieved_rewards, retrieved_memory_idxs
 
 
